@@ -70,22 +70,10 @@ int main() {
                         auto oldannot = dynamic_cast<InkAnnotation *>(annot1);
                         auto newannot = new InkAnnotation();
                         newannot_base = static_cast<Annotation *>(newannot);
+                        std::cout<<"opacity: "<<oldannot->style().opacity()<<std::endl;
                         // set stuff
                         // setting inkpath not easy
-                        //newannot->setInkPaths(oldannot->inkPaths());
-                        QList<QLinkedList<QPointF>> newInkPaths;
-                        auto oldInkPaths= oldannot->inkPaths();
-                        for (auto oldlop: oldInkPaths)
-                        {
-                            QLinkedList<QPointF> newlop;
-                            for (auto p: oldlop)
-                            {
-                                auto q = new QPointF(p);
-                                newlop.append(*q);
-                            }
-                            newInkPaths.append(newlop);
-                        }
-                        newannot->setInkPaths(newInkPaths);
+                        newannot->setInkPaths(oldannot->inkPaths());
                         break;
                     }
                     case Annotation::AGeom: {
@@ -120,7 +108,17 @@ int main() {
                 }
                 if (tocopy) {
                     // copy properties in the base class
-                    newannot_base->setStyle(annot1->style());
+                    //newannot_base->setStyle(annot1->style());
+                    auto style = annot1->style();
+                    style.setColor({255,0,0});
+                    style.setOpacity(0.1);
+                    style.setEffectIntensity(0);
+                    newannot_base->setStyle(style);
+                    std::cout<<"new opacity: "<<newannot_base->style().opacity()<<std::endl;
+
+                    newannot_base->setAnnotationAppearance(*annot1->annotationAppearance());
+
+                    // non appearance stuff
                     newannot_base->setBoundary(annot1->boundary());
                     newannot_base->setContents(annot1->contents());
                     newannot_base->setCreationDate(annot1->creationDate());
@@ -128,7 +126,6 @@ int main() {
                     newannot_base->setAuthor(annot1->author());
                     newannot_base->setFlags(annot1->flags());
                     newannot_base->setPopup(annot1->popup());
-                    newannot_base->setAnnotationAppearance(*annot1->annotationAppearance());
 
                     page2->addAnnotation(newannot_base);
                 }
