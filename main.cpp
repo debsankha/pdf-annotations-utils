@@ -32,12 +32,14 @@ int main() {
                 // heuristic to determine if two annotations are the same
                 if (annotations_eq(annot1, annot2)) is_in_2=true;
             }
+            std::cout<<"is_in_2: "<<is_in_2<<std::endl;
             if (!is_in_2)
             {
                 Annotation* newannot_base;
                 bool tocopy=false;
                 switch (annot1->subType()) {
                     case Annotation::AHighlight: {
+                        std::cout<<"type: highlight"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<HighlightAnnotation *>(annot1);
                         auto newannot = new HighlightAnnotation();
@@ -49,6 +51,7 @@ int main() {
                         break;
                     }
                     case Annotation::AText: {
+                        std::cout<<"type: text"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<TextAnnotation *>(annot1);
                         auto newannot = new TextAnnotation(oldannot->textType());
@@ -62,12 +65,56 @@ int main() {
                         break;
                     }
                     case Annotation::AInk: {
+                        std::cout<<"type: ink"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<InkAnnotation *>(annot1);
                         auto newannot = new InkAnnotation();
                         newannot_base = static_cast<Annotation *>(newannot);
                         // set stuff
-                        newannot->setInkPaths(oldannot->inkPaths());
+                        // setting inkpath not easy
+                        //newannot->setInkPaths(oldannot->inkPaths());
+                        QList<QLinkedList<QPointF>> newInkPaths;
+                        auto oldInkPaths= oldannot->inkPaths();
+                        for (auto oldlop: oldInkPaths)
+                        {
+                            QLinkedList<QPointF> newlop;
+                            for (auto p: oldlop)
+                            {
+                                auto q = new QPointF(p);
+                                newlop.append(*q);
+                            }
+                            newInkPaths.append(newlop);
+                        }
+                        newannot->setInkPaths(newInkPaths);
+                        break;
+                    }
+                    case Annotation::AGeom: {
+                        std::cout<<"type: geom"<<std::endl;
+                        tocopy = true;
+                        auto oldannot = dynamic_cast<GeomAnnotation *>(annot1);
+                        auto newannot = new GeomAnnotation();
+                        newannot_base = static_cast<Annotation *>(newannot);
+                        // set stuff
+                        newannot->setGeomType(oldannot->geomType());
+                        newannot->setGeomInnerColor(oldannot->geomInnerColor());
+                        break;
+                    }
+                    case Annotation::ALine: {
+                        std::cout<<"type: line"<<std::endl;
+                        tocopy = true;
+                        auto oldannot = dynamic_cast<LineAnnotation*>(annot1);
+                        auto newannot = new LineAnnotation(oldannot->lineType());
+                        newannot_base = static_cast<Annotation *>(newannot);
+                        // set stuff
+                        newannot->setLineClosed(oldannot->isLineClosed());
+                        newannot->setLineStartStyle(oldannot->lineStartStyle());
+                        newannot->setLineEndStyle(oldannot->lineEndStyle());
+                        newannot->setLineInnerColor(oldannot->lineInnerColor());
+                        newannot->setLineIntent(oldannot->lineIntent());
+                        newannot->setLineLeadingBackPoint(oldannot->lineLeadingBackPoint());
+                        newannot->setLineLeadingForwardPoint(oldannot->lineLeadingBackPoint());
+                        newannot->setLinePoints(oldannot->linePoints());
+                        newannot->setLineShowCaption(oldannot->lineShowCaption());
                         break;
                     }
                 }
@@ -81,6 +128,7 @@ int main() {
                     newannot_base->setAuthor(annot1->author());
                     newannot_base->setFlags(annot1->flags());
                     newannot_base->setPopup(annot1->popup());
+                    newannot_base->setAnnotationAppearance(*annot1->annotationAppearance());
 
                     page2->addAnnotation(newannot_base);
                 }
