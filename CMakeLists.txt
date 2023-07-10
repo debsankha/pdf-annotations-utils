@@ -25,3 +25,9 @@ target_link_libraries(test
         PkgConfig::POPPLER_QT5
         )
 
+add_executable(extract print_annotations.cpp)
+target_link_libraries(extract
+        Qt5::Core
+        Qt5::Gui
+        PkgConfig::POPPLER_QT5
+        )
