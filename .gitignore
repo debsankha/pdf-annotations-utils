@@ -1,3 +1,9 @@
+cmake-build-debug/
+.idea/
+
+# pdf files
+*.pdf
+
 # Prerequisites
 *.d
 
