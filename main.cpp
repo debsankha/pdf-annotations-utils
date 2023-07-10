@@ -70,7 +70,6 @@ int main() {
                         auto oldannot = dynamic_cast<InkAnnotation *>(annot1);
                         auto newannot = new InkAnnotation();
                         newannot_base = static_cast<Annotation *>(newannot);
-                        std::cout<<"opacity: "<<oldannot->style().opacity()<<std::endl;
                         // set stuff
                         // setting inkpath not easy
                         newannot->setInkPaths(oldannot->inkPaths());
@@ -105,19 +104,31 @@ int main() {
                         newannot->setLineShowCaption(oldannot->lineShowCaption());
                         break;
                     }
+                    case Annotation::AStamp:
+                        break;
+                    case Annotation::ALink:
+                        break;
+                    case Annotation::ACaret:
+                        break;
+                    case Annotation::AFileAttachment:
+                        break;
+                    case Annotation::ASound:
+                        break;
+                    case Annotation::AMovie:
+                        break;
+                    case Annotation::AScreen:
+                        break;
+                    case Annotation::AWidget:
+                        break;
+                    case Annotation::ARichMedia:
+                        break;
+                    case Annotation::A_BASE:
+                        break;
                 }
                 if (tocopy) {
-                    // copy properties in the base class
-                    //newannot_base->setStyle(annot1->style());
-                    auto style = annot1->style();
-                    style.setColor({255,0,0});
-                    style.setOpacity(0.1);
-                    style.setEffectIntensity(0);
-                    newannot_base->setStyle(style);
-                    std::cout<<"new opacity: "<<newannot_base->style().opacity()<<std::endl;
-
+                    // appearance related stuff
+                    newannot_base->setStyle(annot1->style());
                     newannot_base->setAnnotationAppearance(*annot1->annotationAppearance());
-
                     // non appearance stuff
                     newannot_base->setBoundary(annot1->boundary());
                     newannot_base->setContents(annot1->contents());
