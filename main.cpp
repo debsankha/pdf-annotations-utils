@@ -12,8 +12,8 @@ bool annotations_eq(Annotation* annot1, Annotation* annot2) {
 
 int main() {
     // we will add stuff from file1 to file2
-    QString file1 = "/Users/debsankha.manik/private_projects/poppler-qt5/small_kobo.pdf";
-    QString file2 = "/Users/debsankha.manik/private_projects/poppler-qt5/small_mac.pdf";
+    QString file2 = "/Users/debsankha.manik/private_projects/poppler-qt5/small_kobo.pdf";
+    QString file1 = "/Users/debsankha.manik/private_projects/poppler-qt5/small_mac.pdf";
     QString fileout = "/Users/debsankha.manik/private_projects/poppler-qt5/small_merged.pdf";
     Document* doc1 = Document::load(file1);
     Document* doc2 = Document::load(file2);
