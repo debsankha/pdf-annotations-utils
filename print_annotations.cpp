@@ -96,7 +96,29 @@ int main() {
         auto c = oldannot2->style().color();
         cout<<format("color: ({}, {}, {}, {})", c.red(), c.green(), c.blue(), c.alpha())<<endl;
 
-        s2.
+        cout<<"linestyle "<<oldannot2->style().lineStyle()<<endl;
+        cout<<"lineffect "<<oldannot2->style().lineEffect()<<endl;
+        cout<<"effectintensity: "<<oldannot2->style().effectIntensity()<<endl;
+
+        // pen properties
+        cout << format("xcorners: {}, xcorners:  {}", s2.xCorners(), s2.yCorners());
+        //const QVector<double> &dashArray() const; // [ 3 ]
+        //void setDashArray(const QVector<double> &array);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // add to page
         page2->removeAnnotation(oldannot2);
         page2->addAnnotation(newannot);
