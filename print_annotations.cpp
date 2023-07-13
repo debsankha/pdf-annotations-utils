@@ -57,6 +57,29 @@ int main() {
         cout<<"width: "<<s2.width()<<endl;
         s2.setWidth(4);
 
+        // checking if all the points are the same
+        int idx=0;
+        for (auto path1: oldannot1->inkPaths())
+        {
+            auto path2 = oldannot2->inkPaths()[idx];
+            auto pt2 = QLinkedList<QPointF>::iterator(path2.begin());
+            for (auto pt1: path1){
+                assert(pt1.x() == pt2->x());
+                assert(pt1.y() == pt2->y());
+                pt2++;
+            }
+            idx++;
+        }
+        //
+        assert(oldannot1->subType() ==oldannot2->subType());
+        assert(oldannot1->boundary()==oldannot2->boundary());
+        assert(oldannot1->author()==oldannot2->author());
+        assert(oldannot1->uniqueName()==oldannot2->uniqueName());
+        assert(oldannot1->revisionScope()==oldannot2->revisionScope());
+        assert(oldannot1->revisions()==oldannot2->revisions());
+        //assert(oldannot1->annotationAppearance() ==oldannot2->annotationAppearance());
+
+
         //create a new annotation object
         auto newannot = new InkAnnotation();
 
@@ -66,7 +89,7 @@ int main() {
 
         newannot->setAnnotationAppearance(*oldannot2->annotationAppearance());
         newannot->setInkPaths(oldannot2->inkPaths());
-        //newannot->setBoundary(oldannot2->boundary());
+        newannot->setBoundary(oldannot2->boundary());
         newannot->setStyle(s2);
 
         auto bound = oldannot2->boundary();
@@ -104,19 +127,6 @@ int main() {
         cout << format("xcorners: {}, xcorners:  {}", s2.xCorners(), s2.yCorners());
         //const QVector<double> &dashArray() const; // [ 3 ]
         //void setDashArray(const QVector<double> &array);
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         // add to page

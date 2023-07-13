@@ -52,8 +52,8 @@ int main() {
     s.setColor(QColorConstants::DarkRed);
     s.setLineStyle(Annotation::LineStyle::Solid);
 
-    s.setWidth(2);
-    s.setOpacity(1);
+    s.setWidth(5);
+    s.setOpacity(0.5);
     s.setLineEffect(Annotation::LineEffect::NoEffect);
 
     QLinkedList<QPointF> path{
@@ -69,15 +69,17 @@ int main() {
     delete newannot;
 
     // create line
-    auto l = new LineAnnotation(LineAnnotation::LineType::StraightLine);
+    //auto l = new LineAnnotation(LineAnnotation::LineType::StraightLine);
+    auto l = new LineAnnotation(LineAnnotation::LineType::Polyline);
     l->setBoundary({0.1, 0.1, 0.8, 0.8});
-    l->setLinePoints({{0.14, 0.35}, {0.8, 0.95}});
+    l->setLinePoints({{0.14, 0.35}, {0.4,0.65}, {0.8, 0.95}});
+    //l->setLinePoints({{0.14, 0.35}, {0.8, 0.95}});
+    //l->setLineClosed(true);
 
-    s = l->style();
-    s.setWidth(10);
-    s.setOpacity(1.0);
-    s.setColor(QColorConstants::DarkGreen);
-    l->setStyle(s);
+    Annotation::Style t;
+    //s.setOpacity(1.0);
+    t.setColor(QColorConstants::DarkGreen);
+    l->setStyle(t);
 
     //l->setLineInnerColor(QColorConstants::DarkRed);
     // l->setLineIntent(LineAnnotation::LineIntent::Dimension);

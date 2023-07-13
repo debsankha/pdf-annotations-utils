@@ -1,6 +1,9 @@
 #include <iostream>
+#include <format>
 #include <poppler-qt5.h>
 #include <QFont>
+#include <QCommandLineParser>
+
 
 using namespace Poppler;
 
@@ -10,11 +13,27 @@ bool annotations_eq(Annotation* annot1, Annotation* annot2) {
 }
 
 
-int main() {
+int main(int argc, char*argv[]) {
+    QCoreApplication app(argc, argv);
+    QCoreApplication::setApplicationName("my-copy-program");
+    QCoreApplication::setApplicationVersion("1.0");
+
+    QCommandLineParser parser;
+    parser.setApplicationDescription("copies PDF annotations from one file to another");
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addPositionalArgument("file1", QCoreApplication::translate("main", "PDF file to copy annotations from"));
+    parser.addPositionalArgument("file2", QCoreApplication::translate("main", "PDF file to copy annotations to"));
+    parser.addPositionalArgument("outfile", QCoreApplication::translate("main", "new PDF file"));
+
+    // Process the actual command line arguments given by the user
+    parser.process(app);
+    const QStringList args = parser.positionalArguments();
+    auto file1 = args.at(0);
+    auto file2 = args.at(1);
+    auto fileout = args.at(2);
+
     // we will add stuff from file1 to file2
-    QString file2 = "/Users/debsankha.manik/private_projects/poppler-qt5/small_kobo.pdf";
-    QString file1 = "/Users/debsankha.manik/private_projects/poppler-qt5/small_mac.pdf";
-    QString fileout = "/Users/debsankha.manik/private_projects/poppler-qt5/small_merged.pdf";
     Document* doc1 = Document::load(file1);
     Document* doc2 = Document::load(file2);
 
@@ -32,14 +51,12 @@ int main() {
                 // heuristic to determine if two annotations are the same
                 if (annotations_eq(annot1, annot2)) is_in_2=true;
             }
-            std::cout<<"is_in_2: "<<is_in_2<<std::endl;
             if (!is_in_2)
             {
                 Annotation* newannot_base;
                 bool tocopy=false;
                 switch (annot1->subType()) {
                     case Annotation::AHighlight: {
-                        std::cout<<"type: highlight"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<HighlightAnnotation *>(annot1);
                         auto newannot = new HighlightAnnotation();
@@ -51,7 +68,6 @@ int main() {
                         break;
                     }
                     case Annotation::AText: {
-                        std::cout<<"type: text"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<TextAnnotation *>(annot1);
                         auto newannot = new TextAnnotation(oldannot->textType());
@@ -65,7 +81,6 @@ int main() {
                         break;
                     }
                     case Annotation::AInk: {
-                        std::cout<<"type: ink"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<InkAnnotation *>(annot1);
                         auto newannot = new InkAnnotation();
@@ -76,7 +91,6 @@ int main() {
                         break;
                     }
                     case Annotation::AGeom: {
-                        std::cout<<"type: geom"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<GeomAnnotation *>(annot1);
                         auto newannot = new GeomAnnotation();
@@ -87,7 +101,6 @@ int main() {
                         break;
                     }
                     case Annotation::ALine: {
-                        std::cout<<"type: line"<<std::endl;
                         tocopy = true;
                         auto oldannot = dynamic_cast<LineAnnotation*>(annot1);
                         auto newannot = new LineAnnotation(oldannot->lineType());
@@ -146,6 +159,7 @@ int main() {
 
     PDFConverter *pdfConv = doc2->pdfConverter();
     pdfConv->setOutputFileName(fileout);
+    std::cout <<std::format("writing output: {}\n", fileout.toStdString());
     pdfConv->setPDFOptions(pdfConv->pdfOptions()|PDFConverter::WithChanges);
     bool success = pdfConv->convert();
     delete pdfConv;
