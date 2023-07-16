@@ -20,8 +20,8 @@ find_package(Qt5 COMPONENTS
         Gui
         REQUIRED)
 
-add_executable(test main.cpp)
-target_link_libraries(test
+add_executable(pdf_merge_annotations main.cpp)
+target_link_libraries(pdf_merge_annotations
         Qt5::Core
         Qt5::Gui
         PkgConfig::POPPLER_QT5
