@@ -55,6 +55,7 @@ int main(int argc, char*argv[]) {
             {
                 Annotation* newannot_base;
                 bool tocopy=false;
+                bool isInkannot = false;
                 switch (annot1->subType()) {
                     case Annotation::AHighlight: {
                         tocopy = true;
@@ -83,11 +84,31 @@ int main(int argc, char*argv[]) {
                     case Annotation::AInk: {
                         tocopy = true;
                         auto oldannot = dynamic_cast<InkAnnotation *>(annot1);
-                        auto newannot = new InkAnnotation();
+                        auto newannot = new GeomAnnotation();
+                        newannot->setGeomType(GeomAnnotation::InscribedSquare);
+                        double top,left=100000;
+                        double bottom,right=0;
+                        for (const auto& inkpath: oldannot->inkPaths())
+                        {
+                            for (const auto& pt: inkpath)
+                            {
+                                if (pt.y()>bottom) bottom = pt.y();
+                                if (pt.y()<top) top = pt.y();
+                                if (pt.x()>right) right = pt.x();
+                                if (pt.x()<left) left = pt.x();
+                            }
+                        }
+                        newannot->setBoundary({left, top, right-left, bottom-top});
+
+                        auto s = newannot->style();
+                        s.setColor(QColorConstants::DarkRed);
+                        s.setOpacity(0.2);
+                        newannot->setStyle(s);
                         newannot_base = static_cast<Annotation *>(newannot);
+                        isInkannot = true;
                         // set stuff
                         // setting inkpath not easy
-                        newannot->setInkPaths(oldannot->inkPaths());
+                        //newannot->setInkPaths(oldannot->inkPaths());
                         break;
                     }
                     case Annotation::AGeom: {
@@ -140,10 +161,12 @@ int main(int argc, char*argv[]) {
                 }
                 if (tocopy) {
                     // appearance related stuff
-                    newannot_base->setStyle(annot1->style());
-                    newannot_base->setAnnotationAppearance(*annot1->annotationAppearance());
-                    // non appearance stuff
-                    newannot_base->setBoundary(annot1->boundary());
+                    if (!isInkannot) {
+                        newannot_base->setStyle(annot1->style());
+                        newannot_base->setAnnotationAppearance(*annot1->annotationAppearance());
+                        // non appearance stuff
+                        newannot_base->setBoundary(annot1->boundary());
+                    }
                     newannot_base->setContents(annot1->contents());
                     newannot_base->setCreationDate(annot1->creationDate());
                     newannot_base->setUniqueName(annot1->uniqueName());
